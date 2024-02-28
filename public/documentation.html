@@ -3,6 +3,7 @@
     <head>
       <meta charset="UTF-8">
       <title>Documentation</title>
+      <link rel="stylesheet" href="styles.css">
     </head>
 
     <body>
@@ -19,12 +20,106 @@
           <h3>Project Overview</h3>
           <p>The following sections provides information about the requirements for the app.</p>
           <h3>The 5 Ws</h3>
-          <p>    Who - Immediate users include frontend developers and enthusiasts of the myFlix application who seek information about movies.
-            What - The server-side component comprises the server, business logic, and business layers of the application. It involves building a well-designed REST API and database using JavaScript, Node.js, Express, and MongoDB.
-            When - The server-side operates whenever users interact with myFlix, processing their requests and managing data operations.
-            Where - The application will be hosted online and is responsive, ensuring accessibility across various devices.
-            Why - Movie enthusiasts desire access to movie-related information, which the myFlix server-side component facilitates by processing requests and storing data efficiently.
-        </p>
+          <ul>
+            <li>
+              <p><strong>Who</strong> - Immediate users include frontend developers and enthusiasts of the myFlix application who seek information about movies.</p>
+            </li>
+            <li>
+              <p><strong>What</strong> - The server-side component comprises the server, business logic, and business layers of the application. It involves building a well-designed REST API and database using JavaScript, Node.js, Express, and MongoDB.</p>
+            </li>
+            <li>
+              <p><strong>When</strong> - The server-side operates whenever users interact with myFlix, processing their requests and managing data operations.</p>
+            </li>
+            <li>
+              <p><strong>Where</strong> - The application will be hosted online and is responsive, ensuring accessibility across various devices.</p>
+            </li>
+            <li>
+              <p><strong>Why</strong> - Movie enthusiasts desire access to movie-related information, which the myFlix server-side component facilitates by processing requests and storing data efficiently.</p>
+            </li>
+          </ul>
+          <h2>Backend API</h2>
+          <h3>Server Data</h3>
+          <ul>
+            <li>
+              <p><strong>Host</strong> - Personal server.</p>
+            </li>
+            <li>
+              <p><strong>URL</strong> - "http://localhost:8080"</p>
+            </li>
+          </ul>
+          <h3>Endpoint Details</h3>
+          <table border="1">
+            <thead>
+              <tr>
+                <th><strong>Method</strong></th>
+                <th><strong>Endpoint</strong></th>
+                <th><strong>Description</strong></th>
+                <th><strong>Response</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>GET</td>
+                <td>/</td>
+                <td>Returns a browser message.</td>
+                <td>Body: text showing that the "myFlix" web page is in development.</td>
+              </tr>              
+              <tr>
+                <td>GET</td>
+                <td>/movies</td>
+                <td>Returns a list of movies.</td>
+                <td>Status Code: 200 OK<br>Body: JSON array of movie objects.</td>
+              </tr>
+              <tr>
+                <td>GET</td>
+                <td>/movies/:title</td>
+                <td>Retrieves a specific movie by its title.</td>
+                <td>Status Code: 200 OK if the movie is found, 400 Bad Request if the movie is not found.<br>Body: JSON object representing the movie if found, or a string indicating "Title not found!" if not found.</td>
+              </tr>
+              <tr>
+                <td>GET</td>
+                <td>/movies/genre/:genreName</td>
+                <td>Retrieves movies by their genre name.</td>
+                <td>Status Code: 200 OK if the genre is found, 400 Bad Request if the genre is not found.<br>Body: JSON object representing the genre if found, or a string indicating "Genre not found!" if not found.</td>
+              </tr>
+              <tr>
+                <td>GET</td>
+                <td>/movies/directors/:directorName</td>
+                <td>Retrieves movies by their director's name.</td>
+                <td>Status Code: 200 OK if the director is found, 400 Bad Request if the director is not found.<br>Body: JSON object representing the director's data if found, or a string indicating "Director not found!" if not found.</td>
+              </tr>
+              <tr>
+                <td>POST</td>
+                <td>/users</td>
+                <td>Creates a new user.</td>
+                <td>Status Code: 201 new user created, 400 Bad Request if a name is not provided.<br>Body: new user named returned as a JSON object.</td>
+              </tr>
+              <tr>
+                <td>PUT</td>
+                <td>/users/:id</td>
+                <td>Updates an existing user's name based on the provided user ID (:id) in the route parameter.</td>
+                <td>Status Code: 200 OK user name updated, 400 Bad Request if no user with the specified ID is found.<br>Body: updated user object.</td>
+              </tr>
+              <tr>
+                <td>POST</td>
+                <td>/users/:id/:movieTitle</td>
+                <td>Adds a favorite movie to a user via his user ID (:id) in the route parameter.</td>
+                <td>Status Code: 200 OK, 400 Bad Request if no user with the specified ID is found.<br>Body: text showing that the "named" movie has been added.</td>
+              </tr>
+              <tr>
+                <td>DELETE</td>
+                <td>/users/:id/:movieTitle</td>
+                <td>Deletes a favorite movie from a user's array via his user ID (:id) in the route parameter.</td>
+                <td>Status Code: 200 OK, 400 Bad Request if no user with the specified ID is found.<br>Body: text showing that the "named" movie has been deleted.</td>
+              </tr>
+              <tr>
+                <td>DELETE</td>
+                <td>/users/:id</td>
+                <td>Deregisters existing users from the users array via his user ID (:id) in the route parameter.</td>
+                <td>Status Code: 200 OK, 400 Bad Request if no user with the specified ID is found.<br>Body: text showing that the user id has been removed from the users array.</td>
+              </tr>
+            </tbody>
+          </table>
         </main>
         <footer>
             <h3>Author</h3>
