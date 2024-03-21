@@ -44,7 +44,7 @@
               <p><strong>Host</strong> - Personal server.</p>
             </li>
             <li>
-              <p><strong>URL</strong> - "http://localhost:8080"</p>
+              <p><strong>URL</strong> - "http://localhost:27017"</p>
             </li>
           </ul>
           <h3>Endpoint Details</h3>
@@ -54,69 +54,166 @@
                 <th><strong>Method</strong></th>
                 <th><strong>Endpoint</strong></th>
                 <th><strong>Description</strong></th>
-                <th><strong>Response</strong></th>
+                <th><strong>Mongoose Logic</strong></th>
+                <th><strong>Status Code Response</strong></th>
+                <th><strong>Example JSON Response</strong></th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>GET</td>
-                <td>/</td>
-                <td>Returns a browser message.</td>
-                <td>Body: text showing that the "myFlix" web page is in development.</td>
-              </tr>              
-              <tr>
-                <td>GET</td>
                 <td>/movies</td>
                 <td>Returns a list of movies.</td>
+                <td>await Movies.find()</td>
                 <td>Status Code: 200 OK<br>Body: JSON array of movie objects.</td>
+                <td>
+                  <pre>
+"_id": "65f5a591ddb9c37b728bf202",
+"title": "Silence of the Lambs",
+"genre": "Thriller",
+"director": "Jonathan Demme",
+"Featured": true
+<br>
+"_id": "65f6f147ddb9c37b728bf20a",
+"title": "Minions",
+Etc...            </pre>
+                </td>
               </tr>
               <tr>
                 <td>GET</td>
                 <td>/movies/:title</td>
                 <td>Retrieves a specific movie by its title.</td>
+                <td>await Movies.findOne({ Title: req.params.Title })</td>
                 <td>Status Code: 200 OK if the movie is found, 400 Bad Request if the movie is not found.<br>Body: JSON object representing the movie if found, or a string indicating "Title not found!" if not found.</td>
+                <td>
+                  <pre>
+"_id": "65f6f147ddb9c37b728bf20a",
+"title": "Minions",
+"genre": "Animation",
+"director": "Kyle Balda",
+"Featured": false
+                  </pre>
+                </td>                
               </tr>
               <tr>
                 <td>GET</td>
                 <td>/movies/genre/:genreName</td>
-                <td>Retrieves movies by their genre name.</td>
+                <td>Retrieves movie genre (description) by their genre name.</td>
+                <td>await Movies.findOne({ "Genre.Name": req.params.genreName })</td>
                 <td>Status Code: 200 OK if the genre is found, 400 Bad Request if the genre is not found.<br>Body: JSON object representing the genre if found, or a string indicating "Genre not found!" if not found.</td>
+                <td>
+                  <pre>
+"Name": "Animation",
+"Description": "Animated films involve the creation of a sequence of images,
+ drawings, or illustrations that are photographed by animation cameras."
+                  </pre>
+                </td>  
               </tr>
               <tr>
                 <td>GET</td>
-                <td>/movies/directors/:directorName</td>
-                <td>Retrieves movies by their director's name.</td>
+                <td>/movies/director/:directorName</td>
+                <td>Retrieves movie director data (bio, birth year, death year) for the named director.</td>
+                <td>await Movies.findOne({ "Director.Name": req.params.directorName })</td>
                 <td>Status Code: 200 OK if the director is found, 400 Bad Request if the director is not found.<br>Body: JSON object representing the director's data if found, or a string indicating "Director not found!" if not found.</td>
+                <td>
+                  <pre>
+"Name": "Kyle Balda",
+"Bio": "Kyle Balda is an American animator and film director, known for his
+ work on animated films such as Despicable Me and Minions.",
+"Birth": "1971",
+"Death": ""
+                  </pre>
+                </td>  
               </tr>
               <tr>
                 <td>POST</td>
                 <td>/users</td>
                 <td>Creates a new user.</td>
+                <td>await Users.findOne({ Username: req.body.Username })</td>
                 <td>Status Code: 201 new user created, 400 Bad Request if a name is not provided.<br>Body: new user named returned as a JSON object.</td>
+                <td>
+                  <pre>
+"Username": "friend2024",
+"Password": "friendpassword2024",
+"Email": "friend2024@gmail.com",
+"Birthday": "1970-05-03T04:00:00.000Z",
+"FavoriteMovies": [],
+"_id": "65fb168711c8d51858d2a81d",
+"__v": 0
+                  </pre>
+                </td>                   
               </tr>
               <tr>
                 <td>PUT</td>
-                <td>/users/:id</td>
-                <td>Updates an existing user's name based on the provided user ID (:id) in the route parameter.</td>
+                <td>/users/:Username</td>
+                <td>Updates an existing user's data based on the user name provided in the route parameter.</td>
+                <td>await Users.findOneAndUpdate({ Username: req.params.Username })</td>
                 <td>Status Code: 200 OK user name updated, 400 Bad Request if no user with the specified ID is found.<br>Body: updated user object.</td>
-              </tr>
+                <td>
+                  <pre>
+"_id": "65f6f544ddb9c37b728bf20c",
+"UserName": "davidcohen2580",
+"Password": "Newtuesdaypassword2024",
+"Email": "newtuesdayuser2024@gmail.com",
+"Birthday": "1990-12-03T05:00:00.000Z",
+"FavoriteMovies": [
+    "65f5a591ddb9c37b728bf202",
+    "65f6ef5addb9c37b728bf207"
+],
+"Username": "NewtuesdayUser2024"
+                  </pre>
+                </td>  
+                </tr>
               <tr>
                 <td>POST</td>
-                <td>/users/:id/:movieTitle</td>
-                <td>Adds a favorite movie to a user via his user ID (:id) in the route parameter.</td>
+                <td>/users/:Username/movies/:MovieID</td>
+                <td>Adds a favorite movie to a user.</td>
+                <td> await Users.findOneAndUpdate({ Username: req.params.Username })</td>
                 <td>Status Code: 200 OK, 400 Bad Request if no user with the specified ID is found.<br>Body: text showing that the "named" movie has been added.</td>
+                <td>
+                  <pre>
+"_id": "65fb05603ba6c066cc719c93",
+"Username": "WednesdayUser2024",
+"Password": "Wednesdaypassword2024",
+"Email": "wednesdayuser2024@gmail.com",
+"FavoriteMovies": [
+    "65f6f17eddb9c37b728bf20b",
+    "65f6f17eddb9c37b728bf20b"
+],
+"__v": 0
+                  </pre>
+                </td>  
               </tr>
               <tr>
                 <td>DELETE</td>
-                <td>/users/:id/:movieTitle</td>
+                <td>/users/favoritemovies/:Username/movies/:MovieID</td>
                 <td>Deletes a favorite movie from a user's array via his user ID (:id) in the route parameter.</td>
+                <td>await Users.findOneAndDelete({ Username: req.params.Username })</td>
                 <td>Status Code: 200 OK, 400 Bad Request if no user with the specified ID is found.<br>Body: text showing that the "named" movie has been deleted.</td>
+                <td>
+                  <pre>
+"_id": "65fb05603ba6c066cc719c93",
+"Username": "WednesdayUser2024",
+"Password": "Wednesdaypassword2024",
+"Email": "wednesdayuser2024@gmail.com",
+"FavoriteMovies": [
+    "65f6f17eddb9c37b728bf20b"
+],
+"__v": 0
+                  </pre>
+                </td>  
               </tr>
               <tr>
                 <td>DELETE</td>
-                <td>/users/:id</td>
-                <td>Deregisters existing users from the users array via his user ID (:id) in the route parameter.</td>
+                <td>/users/userName</td>
+                <td>Deregisters existing users from the users array via his user name in the route parameter.</td>
+                <td>await Users.findOneAndDelete({ Username: req.params.Username })</td>
                 <td>Status Code: 200 OK, 400 Bad Request if no user with the specified ID is found.<br>Body: text showing that the user id has been removed from the users array.</td>
+                <td>
+                  <pre>
+TTTTuesdayUser2024 was deleted.
+                  </pre>
+                </td>  
               </tr>
             </tbody>
           </table>
