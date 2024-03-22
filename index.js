@@ -19,18 +19,6 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(morgan("common"));
 
-//Mongoose - Get all users and their data (not a task req't)
-app.get('/users', async (req, res) => {
-  await Users.find()
-  .then((user) => {
-    res.status(200).json(user);
-  })
-  .catch((err) => {
-    console.error(err);
-    res.status(500).send('Error: ' + err);
-  });
-});
-
 //Mongoose - Get all movies and all their data (2a)
 app.get('/movies', async (req, res) => {
   await Movies.find()
@@ -248,9 +236,9 @@ app.post('/users/:Username/movies/:MovieID', async (req, res) => {
   }
 });*/
 
-//Mongoose - Allow users to delete movie from their favorites (2h) "CODE NOT WORKING - ERROR 404 Not Found"
-app.delete('/users/favoritemovies/:Username/movies/:MovieID', async (req, res) => {
-  await Users.findOneAndDelete({ Username: req.params.Username }, {
+//Mongoose - Allow users to delete movie from their favorites (2h)
+app.delete('/users/:Username/movies/:MovieID', async (req, res) => {
+  await Users.findOneAndUpdate({ Username: req.params.Username }, {
      $pull: { FavoriteMovies: req.params.MovieID }
    },
    { new: true })

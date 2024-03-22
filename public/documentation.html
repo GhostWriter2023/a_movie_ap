@@ -186,9 +186,9 @@ Etc...            </pre>
               </tr>
               <tr>
                 <td>DELETE</td>
-                <td>/users/favoritemovies/:Username/movies/:MovieID</td>
+                <td>/users/:Username/movies/:MovieID</td>
                 <td>Deletes a favorite movie from a user's array via his user ID (:id) in the route parameter.</td>
-                <td>await Users.findOneAndDelete({ Username: req.params.Username })</td>
+                <td>await Users.findOneAndUpdate({ Username: req.params.Username })</td>
                 <td>Status Code: 200 OK, 400 Bad Request if no user with the specified ID is found.<br>Body: text showing that the "named" movie has been deleted.</td>
                 <td>
                   <pre>
