@@ -13,9 +13,25 @@ mongoose.connect('mongodb://127.0.0.1:27017/projectDB'/*, { useNewUrlParser: tru
 
 const app = express();
 
+const { check, validationResult } = require('express-validator');
+
 //app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+const cors = require('cors');
+let allowedOrigins = ['*'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if(!origin) return callback(null, true);
+    if(allowedOrigins.indexOf(origin) === -1){ // If a specific origin isn’t found on the list of allowed origins
+      let message = 'The CORS policy for this application doesn’t allow access from origin ' + origin;
+      return callback(new Error(message ), false);
+    }
+    return callback(null, true);
+  }
+}));
 
 let auth = require('./auth')(app);
 const passport = require('passport');require('./passport');
@@ -109,20 +125,32 @@ app.get('/movies/director/:directorName', passport.authenticate('jwt', { session
 });*/
 
 //Mongoose - Add a user (2e)
-app.post('/users', async (req, res) => {
-  await Users.findOne({ Username: req.body.Username })
+app.post('/users', [
+  check('Username', 'Username must be at least 5 characters long').isLength({min: 5}),
+  check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+  check('Password', 'Password is required').not().isEmpty(),
+  check('Password', 'Password must be at least 8 characters long').isLength({ min: 8 }),
+  check('Email', 'Email does not appear to be valid').isEmail(),
+  check('Birthday', 'Birthday must be in DD-MM-YYYY format').matches(/^([0-9]{2})-([0-9]{2})-([0-9]{4})$/)
+], async (req, res) => {
+  let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+  let hashedPassword = Users.hashPassword(req.body.Password);
+  await Users.findOne({ Username: req.body.Username })//Query Users model to check if username from client already exists. If so, alert them.
     .then((user) => {
       if (user) {
         return res.status(400).send(req.body.Username + 'already exists');
       } else {
         Users
-          .create({
+          .create({//if user does not exist, use Mongoose .create command to set up new user matching schema from models.js file
             Username: req.body.Username,
-            Password: req.body.Password,
+            Password: hashedPassword,
             Email: req.body.Email,
             Birthday: req.body.Birthday
           })
-          .then((user) =>{res.status(201).json(user) })
+          .then((user) =>{ res.status(201).json(user) })//callback sends a response and displays the new user to the client
         .catch((error) => {
           console.error(error);
           res.status(500).send('Error: ' + error);
@@ -173,11 +201,24 @@ app.get('/users/:Username', async (req, res) => {
 });
 
 //Mongoose - Allow users to update their info (2f)
-app.put('/users/:Username', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.put('/users/:Username', [
+  check('Username', 'Username must be at least 5 characters long').isLength({min: 5}),
+  check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+  check('Password', 'Password is required').not().isEmpty(),
+  check('Password', 'Password must be at least 8 characters long').isLength({ min: 8 }),
+  check('Email', 'Email does not appear to be valid').isEmail(),
+  check('Birthday', 'Birthday must be in MM-DD-YYYY format').matches(/^([0-9]{2})-([0-9]{2})-([0-9]{4})$/)
+], passport.authenticate('jwt', { session: false }), async (req, res) => {
+  let errors = validationResult(req); //check validation object for errors
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+  }
+  //Condition to check that username in request matches username in request params
   if(req.user.Username !== req.params.Username){
     return res.status(400).send('Permission denied');
   }
-  await Users.findOneAndUpdate({ Username: req.params.Username },
+  let hashedPassword = Users.hashPassword(req.body.Password);
+  await Users.findOneAndUpdate({ Username: req.params.Username }, //Condition ends, finds user and updates their info
   { $set:
     {
       Username: req.body.Username,
@@ -186,7 +227,7 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }), as
       Birthday: req.body.Birthday
     }
   },
-  { new: true })
+  { new: true }) //This line makes sure that the updated document is returned
   .then((updatedUser) => {
     res.json(updatedUser);
   })
@@ -299,6 +340,19 @@ app.delete('/users/:Username', passport.authenticate('jwt', { session: false }),
       res.status(500).send('Error: ' + err);
   });
 });
+
+
+//Module 2.2.10 - Created this endpoint to delete all documents in the Users Collection
+/*app.delete('/users', async (req, res) => {
+  try {
+    const result = await Users.deleteMany({});
+    console.log(`${result.deletedCount} documents deleted.`);
+    res.status(200).json({ message: `${result.deletedCount} documents deleted.` });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error: ' + err.message);
+  }
+});*/
 
 //Module 2.2.5 Endpoints - Delete user (2i)
 /*app.delete("/users/:id", (req, res) => {
