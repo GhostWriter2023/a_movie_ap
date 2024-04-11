@@ -17,10 +17,9 @@ passport.use(
       passwordField: 'Password',
     },
     async (username, password, callback) => {
-     // console.log(`${username} ${password}`);
+     //console.log(`${username} ${password}`); TROUBLESHOOTING AIDE
       await Users.findOne({ Username: username })
       .then((user) => {
-        console.log(user)
         if (!user) {
           console.log('incorrect username');
           return callback(null, false, { //comes back false if user does not exist

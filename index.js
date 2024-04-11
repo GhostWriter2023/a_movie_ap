@@ -15,7 +15,6 @@ const app = express();
 
 const { check, validationResult } = require('express-validator');
 
-//app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -62,18 +61,6 @@ app.get('/movies/:Title', passport.authenticate('jwt', { session: false }), asyn
   });
 });
 
-//Module 2.2.5 Endpoints - Get movie by title (2b)
-/*app.get("/movies/:title", (req, res) => {
-  const { title } = req.params;
-  const movie = movies.find((movie) => movie.Title === title);
-
-  if (movie) {
-    res.status(200).json(movie);
-  } else {
-    res.status(400).send("Title not found!");
-  }
-});*/
-
 //Mongoose - Get genre by genre name (2c)
 app.get("/movies/genre/:genreName", passport.authenticate('jwt', { session: false }), async (req, res) => {
   console.log(req.params.genreName);
@@ -87,19 +74,6 @@ app.get("/movies/genre/:genreName", passport.authenticate('jwt', { session: fals
   });
 });  
 
-//Module 2.2.5 Endpoints - Get genre by genre name (2c)
-/*app.get("/movies/genre/:genreName", (req, res) => {
-  const { genreName } = req.params;
-
-  const genre = movies.filter((movie) => movie.Genre.Name === genreName);
-
-  if (genre) {
-    res.status(200).json(genre);
-  } else {
-    res.status(400).send("Genre not found!");
-  }
-});*/
-
 //Mongoose - Get data about a director (2d)
 app.get('/movies/director/:directorName', passport.authenticate('jwt', { session: false }), async (req, res) => {
   await Movies.findOne({ "Director.Name": req.params.directorName })
@@ -111,18 +85,6 @@ app.get('/movies/director/:directorName', passport.authenticate('jwt', { session
       res.status(500).send('Error: ' + err);
   });
 });
-
-//Module 2.2.5 Endpoints - Get data about a director (2d)
-/*app.get("/movies/directors/:directorName", (req, res) => {
-  const { directorName } = req.params;
-  const director = movies.filter((movie) => movie.Director.Name === directorName);
-
-  if (director) {
-    res.status(200).json(director);
-  } else {
-    res.status(400).send("Director not found!");
-  }
-});*/
 
 //Mongoose - Add a user (2e)
 app.post('/users', [
@@ -163,43 +125,6 @@ app.post('/users', [
     });
 });
 
-//Module 2.2.5 Endpoints - Add a user (2e)
-/*app.post("/users", (req, res) => {
-  let newUser = req.body;
-
-  if (!newUser.name) {
-    newUser.id = uuid.v4();
-    users.push(newUser);
-    res.status(201).send(newUser);
-  } else {
-    res.status(400).send("Users must provide a name in request body");
-  }
-});*/
-
-//Mongoose - Get all users (not a task req't)
-app.get('/users', async (req, res) => {
-  await Users.find()
-    .then((user) => {
-      res.status(201).json(user);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send('Error: ' + err);
-  });
-});
-
-//Mongoose - Get a user by username (not a task req't)
-app.get('/users/:Username', async (req, res) => {
-  await Users.findOne({ Username: req.params.Username })
-    .then((user) => {
-      res.json(user);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send('Error: ' + err);
-  });
-});
-
 //Mongoose - Allow users to update their info (2f)
 app.put('/users/:Username', [
   check('Username', 'Username must be at least 5 characters long').isLength({min: 5}),
@@ -222,7 +147,7 @@ app.put('/users/:Username', [
   { $set:
     {
       Username: req.body.Username,
-      Password: req.body.Password,
+      Password: hashedPassword,
       Email: req.body.Email,
       Birthday: req.body.Birthday
     }
@@ -236,21 +161,6 @@ app.put('/users/:Username', [
       res.status(500).send('Error: ' + err);
   });
 });
-
-//Module 2.2.5 Endpoints - Allow users to update their info (2f)
-/*app.put("/users/:id", (req, res) => {
-  const { id } = req.params;
-  const updatedUser = req.body;
-
-  let user = users.find((user) => user.id == id);
-
-  if (user) {
-    user.Name = updatedUser.Name;
-    res.status(200).json(user);
-  } else {
-    res.status(400).send("No user with that ID was found.");
-  }
-});*/
 
 //Mongoose - Allow users to add movie to their favorites (2g)
 app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { session: false }), async (req, res) => {
@@ -270,22 +180,6 @@ app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { sess
   });
 });
 
-//Module 2.2.5 Endpoints - Allow users to add movie to their favorites (2g)
-/*app.post("/users/:id/:movieTitle", (req, res) => {
-  const { id, movieTitle } = req.params;
-
-  let user = users.find((user) => user.id == id);
-
-  if (user) {
-    user.FavoriteMovies.push(movieTitle);
-    res
-      .status(200)
-      .send(`${movieTitle} has been added to the array of user id: ${id}`);
-  } else {
-    res.status(400).send("No user with that ID was found.");
-  }
-});*/
-
 //Mongoose - Allow users to delete movie from their favorites (2h)
 app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { session: false }), async (req, res) => {
   if(req.user.Username !== req.params.Username){
@@ -303,24 +197,6 @@ app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { se
     res.status(500).send('Error: ' + err);
   });
 });
-
-//Module 2.2.5 Endpoints - Allow users to delete movie from their favorites (2h)
-/*app.delete("/users/:id/:movieTitle", (req, res) => {
-  const { id, movieTitle } = req.params;
-
-  let user = users.find((user) => user.id == id);
-
-  if (user) {
-    user.FavoriteMovies = user.FavoriteMovies.filter(
-      (title) => title !== movieTitle,
-    );
-    res
-      .status(200)
-      .send(`${movieTitle} has been deleted from the array of user id: ${id}`);
-  } else {
-    res.status(400).send("No user with that ID was found.");
-  }
-});*/
 
 //Mongoose - Delete user (2i)
 app.delete('/users/:Username', passport.authenticate('jwt', { session: false }), async (req, res) => {
@@ -340,38 +216,6 @@ app.delete('/users/:Username', passport.authenticate('jwt', { session: false }),
       res.status(500).send('Error: ' + err);
   });
 });
-
-
-//Module 2.2.10 - Created this endpoint to delete all documents in the Users Collection
-/*app.delete('/users', async (req, res) => {
-  try {
-    const result = await Users.deleteMany({});
-    console.log(`${result.deletedCount} documents deleted.`);
-    res.status(200).json({ message: `${result.deletedCount} documents deleted.` });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error: ' + err.message);
-  }
-});*/
-
-//Module 2.2.5 Endpoints - Delete user (2i)
-/*app.delete("/users/:id", (req, res) => {
-  const { id } = req.params;
-  //const deregisterUser = req.body;
-
-  let user = users.find((user) => user.id == id);
-
-  if (user) {
-    //user.Name = deregisterUser.Name;
-    users = users.filter((user) => user.id != id);
-    //res.json(users);
-    res
-      .status(200)
-      .send(`user id: ${user.id}, name: ${user.Name} has been removed from the users array.`);
-  } else {
-    res.status(400).send("No user with that ID was found.");
-  }
-});*/
 
 app.use(express.static("public"));
 
