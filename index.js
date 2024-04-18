@@ -38,8 +38,12 @@ const passport = require('passport');require('./passport');
 
 app.use(morgan("common"));
 
+app.get('/', (req, res) => {
+  res.send('Website is in development');
+});
+
 //Mongoose - Get all movies and all their data (2a)
-app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.get('/movies', /*passport.authenticate('jwt', { session: false }),*/ async (req, res) => {
   await Movies.find()
   .then((movie) => {
     res.status(200).json(movie);
@@ -51,7 +55,7 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), async (req,
 });
 
 //Mongoose - Get movie by title (2b)
-app.get('/movies/:Title', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.get('/movies/:Title', /*passport.authenticate('jwt', { session: false }),*/ async (req, res) => {
   await Movies.findOne({ Title: req.params.Title })
     .then((movie) => {
       res.status(200).json(movie);
@@ -63,7 +67,7 @@ app.get('/movies/:Title', passport.authenticate('jwt', { session: false }), asyn
 });
 
 //Mongoose - Get genre by genre name (2c)
-app.get("/movies/genre/:genreName", passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.get("/movies/genre/:genreName", /*passport.authenticate('jwt', { session: false }),*/ async (req, res) => {
   console.log(req.params.genreName);
   await Movies.findOne({ "Genre.Name": req.params.genreName })
   .then((movie) => {
@@ -76,7 +80,7 @@ app.get("/movies/genre/:genreName", passport.authenticate('jwt', { session: fals
 });  
 
 //Mongoose - Get data about a director (2d)
-app.get('/movies/director/:directorName', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.get('/movies/director/:directorName', /*passport.authenticate('jwt', { session: false }),*/ async (req, res) => {
   await Movies.findOne({ "Director.Name": req.params.directorName })
     .then((movie) => {
       res.status(200).json(movie.Director);
