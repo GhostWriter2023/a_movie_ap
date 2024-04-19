@@ -9,8 +9,16 @@ const Models = require('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
 
+console.log("Connection URI:", process.env.CONNECTION_URI);
 //mongoose.connect('mongodb://127.0.0.1:27017/projectDB'/*, { useNewUrlParser: true, useUnifiedTopology: true }*/);
-mongoose.connect( process.env.CONNECTION_URI);
+mongoose.connect( process.env.CONNECTION_URI )
+.then(() => {
+  console.log("Connected to MongoDB successfully!");
+  // Your remaining code here
+})
+.catch(error => {
+  console.error("Error connecting to MongoDB:", error);
+});
 
 const app = express();
 
@@ -19,6 +27,7 @@ const { check, validationResult } = require('express-validator');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+//NEED TO UPDATE *
 const cors = require('cors');
 let allowedOrigins = ['*'];
 
