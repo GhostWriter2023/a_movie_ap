@@ -51,6 +51,10 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), async (req,
   });
 });
 
+/*app.get('/', (req, res) => {
+  res.send('The website is under development');
+});*/
+
 //Mongoose - Get movie by title (2b)
 app.get('/movies/:Title', passport.authenticate('jwt', { session: false }), async (req, res) => {
   await Movies.findOne({ Title: req.params.Title })
