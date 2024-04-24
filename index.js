@@ -99,7 +99,7 @@ app.post('/users', [
   check('Password', 'Password is required').not().isEmpty(),
   check('Password', 'Password must be at least 8 characters long').isLength({ min: 8 }),
   check('Email', 'Email does not appear to be valid').isEmail(),
-  check('Birthday', 'Birthday must be in YYYY-MM-DD format').matches(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/)
+  check('Birthday', 'Birthday must be in DD-MM-YYYY format').matches(/^([0-9]{2})-([0-9]{2})-([0-9]{4})$/) //check('Birthday', 'Birthday must be in YYYY-MM-DD format').matches(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/)
 ], async (req, res) => {
   let errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -138,7 +138,7 @@ app.put('/users/:Username', [
   check('Password', 'Password is required').not().isEmpty(),
   check('Password', 'Password must be at least 8 characters long').isLength({ min: 8 }),
   check('Email', 'Email does not appear to be valid').isEmail(),
-  check('Birthday', 'Birthday must be in YYYY-MM-DD format').matches(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/)
+  check('Birthday', 'Birthday must be in DD-MM-YYYY format').matches(/^([0-9]{2})-([0-9]{2})-([0-9]{4})$/) //check('Birthday', 'Birthday must be in YYYY-MM-DD format').matches(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/)
 ], passport.authenticate('jwt', { session: false }), async (req, res) => {
   let errors = validationResult(req); //check validation object for errors
     if (!errors.isEmpty()) {
