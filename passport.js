@@ -35,7 +35,7 @@ passport.use(
       })
       .catch((error) => {
         if (error) {
-          console.log(error);
+          console.error(error);
           return callback(error);
         }
       })
