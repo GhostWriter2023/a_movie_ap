@@ -68,7 +68,7 @@ app.get('/movies/:Title', passport.authenticate('jwt', { session: false }), asyn
 });
 
 //Mongoose - Get genre by genre name (2c)
-app.get("/movies/genre/:genreName", passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.get('/movies/genre/:genreName', passport.authenticate('jwt', { session: false }), async (req, res) => {
   console.log(req.params.genreName);
   await Movies.findOne({ "Genre.Name": req.params.genreName })
   .then((movie) => {
