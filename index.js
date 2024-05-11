@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const cors = require('cors');
-let allowedOrigins = ['http://localhost:1234', 'https://serene-otter-991791.netlify.app'];
+let allowedOrigins = ['http://localhost:1234', 'https://myflix-app-2024.netlify.app'];
 
 app.use(cors({
   origin: (origin, callback) => {
