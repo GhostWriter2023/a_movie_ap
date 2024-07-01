@@ -24,7 +24,7 @@ const cors = require('cors');
 let allowedOrigins = [
   'http://localhost:1234',
   'https://myflix-app-2024.netlify.app',
-  //'https://git.heroku.com/ghostwriter-movies.git',
+  'https://git.heroku.com/ghostwriter-movies.git',
   'http://localhost:4200'];
 
 app.use(
@@ -39,13 +39,13 @@ app.use(
       }
       return callback(null, true);
     },
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+/*  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
-  credentials: true
-})
+  credentials: true 
+  })
 );
 
-// Handling preflight requests
+// Enable preflight requests for all routes
 app.options('*', cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
@@ -57,8 +57,9 @@ app.options('*', cors({
   },
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
-  credentials: true
-}));
+  credentials: true */
+  })
+);
 
 let auth = require('./auth')(app);
 const passport = require('passport');
