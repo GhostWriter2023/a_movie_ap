@@ -26,7 +26,8 @@ let allowedOrigins = [
   'https://myflix-app-2024.netlify.app',
   'http://localhost:4200'];
 
-app.use(
+app.use(cors())  
+/*app.use(
   cors({
     origin: (origin, callback) => {
       if(!origin) return callback(null, true);
@@ -40,9 +41,9 @@ app.use(
     },
 /*  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
-  credentials: true*/
+  credentials: true
 })
-);
+);*/
 
 // Handling preflight requests
 app.options('*', cors({
