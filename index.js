@@ -24,10 +24,10 @@ const cors = require('cors');
 let allowedOrigins = [
   'http://localhost:1234',
   'https://myflix-app-2024.netlify.app',
+  //'https://git.heroku.com/ghostwriter-movies.git',
   'http://localhost:4200'];
 
-app.use(cors())  
-/*app.use(
+app.use(
   cors({
     origin: (origin, callback) => {
       if(!origin) return callback(null, true);
@@ -39,11 +39,11 @@ app.use(cors())
       }
       return callback(null, true);
     },
-/*  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
   credentials: true
 })
-);*/
+);
 
 // Handling preflight requests
 app.options('*', cors({
