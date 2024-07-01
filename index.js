@@ -25,6 +25,7 @@ let allowedOrigins = [
   'http://localhost:1234',
   'https://myflix-app-2024.netlify.app',
   'https://git.heroku.com/ghostwriter-movies.git',
+  'https://ghostwriter-movies-1d2fe76cf812.herokuapp.com',
   'http://localhost:4200'];
 
 app.use(
