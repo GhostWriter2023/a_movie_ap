@@ -176,8 +176,8 @@ app.post('/users', [
 app.put('/users/:Username', [
   check('Username', 'Username must be at least 5 characters long').isLength({min: 5}),
   check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
-  check('Password', 'Password is required').not().isEmpty(),
-  check('Password', 'Password must be at least 8 characters long').isLength({ min: 8 }),
+  //check('Password', 'Password is required').not().isEmpty(),
+  check('Password', 'Password must be at least 8 characters long').optional().isLength({ min: 8 }),
   check('Email', 'Email does not appear to be valid').isEmail()
 ], passport.authenticate('jwt', { session: false }), async (req, res) => {
   let errors = validationResult(req); //check validation object for errors
@@ -188,16 +188,57 @@ app.put('/users/:Username', [
   if(req.user.Username !== req.params.Username){
     return res.status(400).send('Permission denied');
   }
-  let hashedPassword = Users.hashPassword(req.body.Password);
-  await Users.findOneAndUpdate({ Username: req.params.Username }, //Condition ends, finds user and updates their info
-  { $set:
-    {
-      Username: req.body.Username,
+  let updateFields = {};
+  if (req.body.Password) {
+    const hashedPassword = Users.hashPassword(req.body.Password);
+    updateFields = {
       Password: hashedPassword,
+    };
+  }
+  if (req.body.Username) {
+    updateFields.Username = req.body.Username;
+  }
+  if (req.body.Email) {
+    updateFields.Email = req.body.Email;
+  }
+  if (req.body.Birthday) {
+    updateFields.Birthday = req.body.Birthday;
+  }
+  try {
+    const updatedUser = await Users.findOneAndUpdate(
+      { Username: req.params.Username },
+      { $set: updateFields },
+      { new: true } // This will return the updated document
+    );
+    if (!updatedUser) {
+      return res.status(404).send('User not found');
+    }
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+  /*  let body = {}
+
+    if(req.body.Password){
+    const hashedPassword = Users.hashPassword(req.body.Password);
+    body = {
+        Username: req.body.Username,
+        Password: hashedPassword,
+        Email: req.body.Email,
+        Birthday: req.body.Birthday
+      }
+  } else {
+    body = {
+      Username: req.body.Username,
       Email: req.body.Email,
       Birthday: req.body.Birthday
     }
-  },
+  }
+  await Users.findOneAndUpdate({ Username: req.params.Username }, //Condition ends, finds user and updates their info
+
+    { $set: body },
+
   { new: true }) //This line makes sure that the updated document is returned
   .then((updatedUser) => {
     res.json(updatedUser);
@@ -206,7 +247,7 @@ app.put('/users/:Username', [
       console.error(err);
       res.status(500).send('Error: ' + err);
   });
-});
+});*/
 
 //Mongoose - Allow users to add movie to their favorites (2g)
 app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { session: false }), async (req, res) => {
